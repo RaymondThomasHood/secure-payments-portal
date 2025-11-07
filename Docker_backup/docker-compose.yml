@@ -1,0 +1,17 @@
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "5001:5000" 
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:443"
+    depends_on:
+      - backend
