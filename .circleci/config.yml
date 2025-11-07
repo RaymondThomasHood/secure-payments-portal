@@ -1,0 +1,22 @@
+version: 2.1
+
+orbs:
+  node: circleci/node@5.0.3
+
+jobs:
+  build:
+    docker:
+      - image: cimg/node:20.11
+    steps:
+      - checkout
+      - run:
+          name: Show working tree
+          command: ls -la
+      - run:
+          name: Print branch
+          command: git rev-parse --abbrev-ref HEAD
+
+workflows:
+  build_and_test:
+    jobs:
+      - build
