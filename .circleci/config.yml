@@ -8,7 +8,7 @@ jobs:
       - checkout
       - run:
           name: Install Sonar Scanner
-          command: npm install -g sonarqube-scanner
+          command: sudo npm install -g sonarqube-scanner
       - run:
           name: Run SonarQube scan
           command: |
