@@ -11,10 +11,14 @@ jobs:
       - checkout
       - run:
           name: Install backend dependencies
-          command: cd backend && npm install
+          command: |
+            cd backend
+            npm install
       - run:
           name: Run backend tests
-          command: cd backend && npm test
+          command: |
+            cd backend
+            npm test
 
   frontend-tests:
     docker:
@@ -23,10 +27,14 @@ jobs:
       - checkout
       - run:
           name: Install frontend dependencies
-          command: cd frontend && npm install
+          command: |
+            cd frontend
+            npm install
       - run:
-          name: Run frontend tests
-          command: cd frontend && npm test
+          name: Run frontend tests (CI mode)
+          command: |
+            cd frontend
+            CI=true npm test -- --watchAll=false
 
   sonar-scan:
     docker:
@@ -34,9 +42,11 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Install Sonar Scanner
+          command: npm install -g sonarqube-scanner
+      - run:
           name: Run SonarQube scan
           command: |
-            npm install -g sonarqube-scanner
             sonar-scanner \
               -Dsonar.projectKey=raymond_org_secure-payments-portal \
               -Dsonar.organization=raymond_org \
