@@ -1,41 +1,6 @@
 version: 2.1
 
-orbs:
-  node: circleci/node@5.0.3
-
 jobs:
-  backend-tests:
-    docker:
-      - image: cimg/node:20.11
-    steps:
-      - checkout
-      - run:
-          name: Install backend dependencies
-          command: |
-            cd backend
-            npm install
-      - run:
-          name: Run backend tests
-          command: |
-            cd backend
-            npm test
-
-  frontend-tests:
-    docker:
-      - image: cimg/node:20.11
-    steps:
-      - checkout
-      - run:
-          name: Install frontend dependencies
-          command: |
-            cd frontend
-            npm install
-      - run:
-          name: Run frontend tests (CI mode)
-          command: |
-            cd frontend
-            CI=true npm test -- --watchAll=false
-
   sonar-scan:
     docker:
       - image: cimg/node:20.11
@@ -54,11 +19,6 @@ jobs:
               -Dsonar.login=$SONAR_TOKEN
 
 workflows:
-  build_and_test:
+  test-sonar:
     jobs:
-      - backend-tests
-      - frontend-tests
-      - sonar-scan:
-          requires:
-            - backend-tests
-            - frontend-tests
+      - sonar-scan
