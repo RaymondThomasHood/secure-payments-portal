@@ -4,19 +4,51 @@ orbs:
   node: circleci/node@5.0.3
 
 jobs:
-  build:
+  backend-tests:
     docker:
       - image: cimg/node:20.11
     steps:
       - checkout
       - run:
-          name: Show working tree
-          command: ls -la
+          name: Install backend dependencies
+          command: cd backend && npm install
       - run:
-          name: Print branch
-          command: git rev-parse --abbrev-ref HEAD
+          name: Run backend tests
+          command: cd backend && npm test
+
+  frontend-tests:
+    docker:
+      - image: cimg/node:20.11
+    steps:
+      - checkout
+      - run:
+          name: Install frontend dependencies
+          command: cd frontend && npm install
+      - run:
+          name: Run frontend tests
+          command: cd frontend && npm test
+
+  sonar-scan:
+    docker:
+      - image: cimg/node:20.11
+    steps:
+      - checkout
+      - run:
+          name: Run SonarQube scan
+          command: |
+            npm install -g sonarqube-scanner
+            sonar-scanner \
+              -Dsonar.projectKey=raymond_org_secure-payments-portal \
+              -Dsonar.organization=raymond_org \
+              -Dsonar.host.url=$SONAR_HOST_URL \
+              -Dsonar.login=$SONAR_TOKEN
 
 workflows:
   build_and_test:
     jobs:
-      - build
+      - backend-tests
+      - frontend-tests
+      - sonar-scan:
+          requires:
+            - backend-tests
+            - frontend-tests
